@@ -10,14 +10,14 @@ const scrapeProducts = async () => {
     await page.goto(url, { waitUntil: "load", timeout: 0 });
 
     const products = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll(".product-item")).map((item) => ({
-            name: item.querySelector(".product-title")?.innerText || "",
-            price: item.querySelector(".product-price")?.innerText || "",
-            description: item.querySelector(".product-description")?.innerText || "",
-            rating: item.querySelector(".product-rating")?.innerText || "",
-            url: item.querySelector(".product-link")?.href || "",
+        return Array.from(document.querySelectorAll(".product_pod")).map((item) => ({
+            name: item.querySelector("h3 a")?.getAttribute("title") || "",
+            price: item.querySelector(".price_color")?.innerText || "",
+            rating: item.querySelector(".star-rating")?.classList[1] || "", 
+            url: item.querySelector(".image_container a")?.href || ""
         }));
     });
+    
 
     for (const product of products) {
         await Product.findOneAndUpdate(
@@ -26,7 +26,6 @@ const scrapeProducts = async () => {
             { upsert: true }
         );
     }
-
     await browser.close();
 };
 
